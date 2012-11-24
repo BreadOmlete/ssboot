@@ -30,21 +30,38 @@ CFLAGS = -Iinc/ -Iinc/CoreSupport -Iboard/$(BOARD)/ -Wall -g3 -gdwarf-2 -O2 $(CO
 LDFLAGS = -T"board/$(BOARD)/$(LINKER_SCRIPT)" -nostartfiles -nodefaultlibs -nostdlib
 LDFLAGS += -Wl,-Map=$(TARGET).map,--cref,--gc-sections $(COPTS) -g3 -gdwarf-2
 
+B_PATH = board/$(BOARD)
+B_OBJECTS = $(foreach obj, $(BOARD_OBJECTS), $(B_PATH)/$(obj))
+
+OBJECTS = $(B_OBJECTS) src/CoreSupport/core_cm3.o src/main.o
 
 
-OBJECTS = board/$(BOARD)/$(BOARD_OBJECTS) src/CoreSupport/core_cm3.o src/main.o board
-
-
-
-
-all:	$(TARGET).elf $(TARGET).bin
+all:	$(TARGET).elf $(TARGET).bin $(TARGET).hex
 
 
 $(TARGET).elf:	$(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) --output $@ $(LDFLAGS)
+	@echo "Linking $@..."
+	@$(CC) $(CFLAGS) $(OBJECTS) --output $@ $(LDFLAGS)
+
+$(TARGET).bin: $(TARGET).elf
+	@echo "Converting to $@..."
+	@$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
+
+$(TARGET).hex: $(TARGET).elf
+	@echo "Converting to $@..."
+	@$(OBJCOPY) -O ihex $(TARGET).elf $(TARGET).hex
 
 .c.o:
-	$(CC) -c $(CFLAGS) $< -o $@
+	@echo "Building $@..."
+	@$(CC) -c $(CFLAGS) $< -o $@
 
 .S.o:
-	$(CC) -c $(CFLAGS) $< -o $@
+	@echo "Building $@..."
+	@$(CC) -c $(CFLAGS) $< -o $@
+	
+clean:
+		@rm -f $(OBJECTS)
+		@rm -f $(TARGET).elf $(TARGET).bin $(TARGET).hex $(TARGET).map
+		@echo "Cleaning done."
+	
+	
