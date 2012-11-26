@@ -9,8 +9,17 @@
 
 #include "board.h"
 
+unsigned char data_buffer[1024];
+
+
 int main()
 {
+	volatile int i = 0;
+
+	while(1)
+	{
+		i++;
+	}
 
 	return 0;
 }

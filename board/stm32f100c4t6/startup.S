@@ -63,6 +63,17 @@ defined in linker script */
   .weak  Reset_Handler
   .type  Reset_Handler, %function
 Reset_Handler:  
+/* Copy ISR vector table to RAM */
+  movs r1, #0
+  mov  r2, #0x20000000
+  ldr  r3, =_isr_vector_size
+
+CopyIsrVector:
+  ldr  r4, [r1]
+  str  r4, [r2, r1]
+  adds r1, r1, #4
+  cmp  r1, r3
+  bcc CopyIsrVector
 
 /* Copy the data segment initializers from flash to SRAM */  
   movs  r1, #0
@@ -92,7 +103,7 @@ LoopFillZerobss:
   cmp   r2, r3
   bcc   FillZerobss
 /* Call the clock system intitialization function.*/
-  bl  SystemInit   
+  bl  SystemInit
 /* Call the application's entry point.*/
   bl    main
   bx    lr    
