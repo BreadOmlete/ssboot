@@ -34,11 +34,8 @@ SECTIONS
   {
     . = ALIGN(4);
     *(.text.Reset_Handler)
-    *(.text.Reset_Handler.stub)
-
     KEEP (*(.init))
     KEEP (*(.fini))
-
     . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
   } >FLASH
@@ -75,18 +72,26 @@ SECTIONS
     _sidata = .;
   } >FLASH
 
+  .vectors :
+  {
+    . = ALIGN(4);
+    . = . + SIZEOF(.isr_vector);
+  } >RAM
+
   /* Initialized data sections goes into RAM, load LMA copy after code */
   .data : AT(_sidata)
   {
-    . = . + SIZEOF(.isr_vector);
     . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
+
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
     *(.glue_7)         /* glue arm to thumb code */
     *(.glue_7t)        /* glue thumb to arm code */
+    KEEP (*(.init))
+    KEEP (*(.fini))
 
     . = ALIGN(4);
     *(.data)           /* .data sections */
