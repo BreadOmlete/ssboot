@@ -1,7 +1,7 @@
-########################################################################
+------------------------------------------------------------------------
 SSBoot - STM32 SPI Bootloader
 Autor: Krzysztof Dziuba <krzysztof.dziuba@gmail.com>
-########################################################################
+------------------------------------------------------------------------
 
 STM32 secondary bootloader for flashing devices over SPI. Primary used 
 as a part of RaspberryPi controlled mobile robot.
@@ -29,7 +29,7 @@ TO DO:
 - hardware description
 
 
-########################################################################
+------------------------------------------------------------------------
 Simplified BSD License:
 
 Copyright (c) 2012, Krzysztof Dziuba
