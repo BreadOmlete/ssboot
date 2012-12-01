@@ -2,7 +2,7 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = 0x20001000;    /* end of 10K RAM */
+_estack = 0x20001000;    /* end of 2K RAM */
 
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0;      /* required amount of heap  */
@@ -11,7 +11,7 @@ _Min_Stack_Size = 0x200; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-  FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 16K
+  FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 2K
   RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 4K
   MEMORY_B1 (rx)  : ORIGIN = 0x60000000, LENGTH = 0K
 }
@@ -27,24 +27,18 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
+  _isr_vector_size = SIZEOF(.isr_vector);
+
   /* The program code and other data goes into FLASH */
   .text :
   {
     . = ALIGN(4);
-    *(.text)           /* .text sections (code) */
-    *(.text*)          /* .text* sections (code) */
-    *(.rodata)         /* .rodata sections (constants, strings, etc.) */
-    *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
-    *(.glue_7)         /* glue arm to thumb code */
-    *(.glue_7t)        /* glue thumb to arm code */
-
+    *(.text.Reset_Handler)
     KEEP (*(.init))
     KEEP (*(.fini))
-
     . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
   } >FLASH
-
 
    .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
     .ARM : {
@@ -74,16 +68,32 @@ SECTIONS
     KEEP (*(.fini_array*))
     KEEP (*(SORT(.fini_array.*)))
     PROVIDE_HIDDEN (__fini_array_end = .);
+  /* used by the startup to initialize data */
+    _sidata = .;
   } >FLASH
 
-  /* used by the startup to initialize data */
-  _sidata = .;
+  .vectors :
+  {
+    . = ALIGN(4);
+    . = . + SIZEOF(.isr_vector);
+  } >RAM
 
   /* Initialized data sections goes into RAM, load LMA copy after code */
-  .data : AT ( _sidata )
+  .data : AT(_sidata)
   {
     . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
+
+    *(.text)           /* .text sections (code) */
+    *(.text*)          /* .text* sections (code) */
+    *(.rodata)         /* .rodata sections (constants, strings, etc.) */
+    *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
+    *(.glue_7)         /* glue arm to thumb code */
+    *(.glue_7t)        /* glue thumb to arm code */
+    KEEP (*(.init))
+    KEEP (*(.fini))
+
+    . = ALIGN(4);
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
 
