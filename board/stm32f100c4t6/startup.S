@@ -48,6 +48,8 @@ defined in linker script */
 .word  _sbss
 /* end address for the .bss section. defined in linker script */
 .word  _ebss
+/* start address for the SRAM vectors section. defined in linker script */
+.word _svector
 
 .equ  BootRAM, 0xF108F85F
 /**
@@ -63,9 +65,10 @@ defined in linker script */
   .weak  Reset_Handler
   .type  Reset_Handler, %function
 Reset_Handler:  
+
 /* Copy ISR vector table to RAM */
   movs r1, #0
-  mov  r2, #0x20000000
+  ldr  r2, =_svector
   ldr  r3, =_isr_vector_size
 
 CopyIsrVector:

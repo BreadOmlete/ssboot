@@ -75,6 +75,7 @@ SECTIONS
   .vectors :
   {
     . = ALIGN(4);
+    _svector = .;
     . = . + SIZEOF(.isr_vector);
   } >RAM
 
