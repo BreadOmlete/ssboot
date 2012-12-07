@@ -27,8 +27,6 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
-  _isr_vector_size = SIZEOF(.isr_vector);
-
   /* The program code and other data goes into FLASH */
   .text :
   {

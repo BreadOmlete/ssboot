@@ -69,7 +69,7 @@ Reset_Handler:
 /* Copy ISR vector table to RAM */
   movs r1, #0
   ldr  r2, =_svector
-  ldr  r3, =_isr_vector_size
+  ldr  r3, =_sdata
 
 CopyIsrVector:
   ldr  r4, [r1]
