@@ -70,6 +70,7 @@ Reset_Handler:
   movs r1, #0
   ldr  r2, =_svector
   ldr  r3, =_sdata
+  subs r3, r3, r2
 
 CopyIsrVector:
   ldr  r4, [r1]
