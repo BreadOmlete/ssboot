@@ -1,9 +1,9 @@
 ------------------------------------------------------------------------
-SSBoot - STM32 SPI Bootloader
+SSBoot - STM32 Secondary Bootloader
 Autor: Krzysztof Dziuba <krzysztof.dziuba@gmail.com>
 ------------------------------------------------------------------------
 
-STM32 secondary bootloader for flashing devices over SPI. Primary used 
+STM32 secondary bootloader for flashing devices over serial port. Primary used
 as a part of RaspberryPi controlled mobile robot.
 
 Supported CPUs: 
@@ -25,7 +25,7 @@ How to build:
 
 
 TO DO:
-- SPI protocol description
+- serial protocol description
 - hardware description
 
 
