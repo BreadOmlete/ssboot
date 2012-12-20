@@ -8,3 +8,7 @@
 */
 
 #include "stm32f10x.h"
+
+
+void board_init();
+void delayms(int time);
