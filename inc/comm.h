@@ -13,7 +13,8 @@
 typedef enum
 {
 	ERR_OK,
-	ERR_FAILED,
+	ERR_FULL,
+	ERR_TIMEOUT,
 } ERR;
 
 
@@ -31,10 +32,10 @@ ERR comm_send(char *buf, char len);
 
 /*
  * Receive data from the remote, store it to buffer buf, store length of
- * received data to len.
+ * received data to len. Leave function after timeout miliseconds.
  * Return: error code.
  */
-ERR comm_recv(char *buf, char *len);
+ERR comm_recv(char *buf, char *len, int timeout);
 
 
 
