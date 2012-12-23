@@ -30,9 +30,9 @@ OBJCOPY = $(CC_PREFIX)-objcopy
 OBJDUMP = $(CC_PREFIX)-objdump
 
 # Options
-CFLAGS = -Iinc/ -Iinc/CoreSupport -Iboard/$(BOARD)/ -Wall -g3 -gdwarf-2 -O2 $(COPTS)
+CFLAGS = -Iinc/ -Iinc/CoreSupport -Iboard/$(BOARD)/ -Wall -g -gdwarf-2 -O0 $(COPTS)
 LDFLAGS = -T"board/$(BOARD)/$(LINKER_SCRIPT)" -nostartfiles -nodefaultlibs -nostdlib
-LDFLAGS += -Wl,-Map=$(TARGET).map,--cref,--gc-sections $(COPTS) -g3 -gdwarf-2
+LDFLAGS += -Wl,-Map=$(TARGET).map,--cref,--gc-sections $(COPTS) -g -gdwarf-2
 LDFLAGS += -ffunction-sections -fdata-sections
 
 B_PATH = board/$(BOARD)
