@@ -66,6 +66,10 @@ defined in linker script */
   .type  Reset_Handler, %function
 Reset_Handler:
 
+#ifndef FROM_FLASH
+  ldr sp, =0x20001000
+#endif
+
 #ifdef FROM_FLASH
 /* Copy ISR vector table to RAM */
   movs r1, #0
