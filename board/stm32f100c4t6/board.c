@@ -9,6 +9,7 @@
 
 #include "board.h"
 #include "comm.h"
+#include "flash.h"
 
 volatile unsigned int _delay_counter;
 
@@ -43,7 +44,7 @@ void delayms(int time)
 }
 
 /* From comm.h */
-ERR comm_init()
+COMM_ERR comm_init()
 {
 	// TX - PB6, RX - PB7
 	// GPIOB6 mode alternative push-pull, 50MHz
@@ -55,21 +56,20 @@ ERR comm_init()
 	USART1->BRR = 0x045;
 	USART1->CR1 |= USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
 
-	return ERR_OK;
+	return COMM_OK;
 }
 
-ERR comm_send(char *buf, char len)
+COMM_ERR comm_send(char *buf, char len)
 {
 	while(--len) {
 		while(!(USART1->SR & USART_SR_TXE));
 		USART1->DR = *buf++;
 	}
 
-
-	return ERR_OK;
+	return COMM_OK;
 }
 
-ERR comm_recv(char *buf, char *len, int timeout)
+COMM_ERR comm_recv(char *buf, char *len, int timeout)
 {
 	int i = 0;
 	_delay_counter = timeout;
@@ -82,9 +82,68 @@ ERR comm_recv(char *buf, char *len, int timeout)
 			_delay_counter = timeout;
 		} else {
 			*len = i;
-			return ERR_TIMEOUT;
+			return COMM_ERR_TIMEOUT;
 		}
 	}
 
-	return ERR_FULL;
+	return COMM_ERR_FULL;
+}
+
+FLASH_ERR flash_erase_sector(unsigned int address)
+{
+	// check if locked:
+	if (FLASH->CR & FLASH_CR_LOCK) {
+		FLASH->KEYR = 0x45670123;
+		FLASH->KEYR = 0xCDEF89AB;
+
+		if (FLASH->CR & FLASH_CR_LOCK)
+			return FLASH_ERR_UNLOCK;
+	}
+
+	FLASH->CR |= FLASH_CR_PER;
+	FLASH->AR = address;
+	FLASH->CR |= FLASH_CR_STRT;
+
+	while(FLASH->SR & FLASH_SR_BSY);
+
+	FLASH->CR &= ~(FLASH_CR_STRT | FLASH_CR_PER);
+	FLASH->SR |= FLASH_SR_EOP;
+
+	return FLASH_OK;
+
+}
+
+FLASH_ERR flash_write_sector(unsigned int address, unsigned short *data, int len)
+{
+	volatile unsigned short *addr = (unsigned short *)(address);
+
+	while(len) {
+		// check if locked:
+		if (FLASH->CR & FLASH_CR_LOCK) {
+			FLASH->KEYR = 0x45670123;
+			FLASH->KEYR = 0xCDEF89AB;
+
+			if (FLASH->CR & FLASH_CR_LOCK)
+				return FLASH_ERR_UNLOCK;
+		}
+
+		while(FLASH->SR & FLASH_SR_BSY);
+
+		if (!(FLASH->CR & FLASH_CR_PG))
+			FLASH->CR |= FLASH_CR_PG;
+
+		*addr = *data;
+		while(FLASH->SR & FLASH_SR_BSY);
+		if (*addr != *data) {
+			FLASH->CR &= ~FLASH_CR_PG;
+			return FLASH_ERR_PROGRAM;
+		}
+		addr += 1;
+		data += 1;
+		len -= 2;
+	}
+
+	FLASH->CR &= ~FLASH_CR_PG;
+
+	return FLASH_OK;
 }
