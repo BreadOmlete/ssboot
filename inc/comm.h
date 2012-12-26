@@ -12,30 +12,30 @@
 
 typedef enum
 {
-	ERR_OK,
-	ERR_FULL,
-	ERR_TIMEOUT,
-} ERR;
+	COMM_OK,
+	COMM_ERR_FULL,
+	COMM_ERR_TIMEOUT,
+} COMM_ERR;
 
 
 /*
  * Initialize communication channel.
  * Return: error code.
  */
-ERR comm_init();
+COMM_ERR comm_init();
 
 /*
  * Send buffer buff of size len to the remote.
  * Return: error code.
  */
-ERR comm_send(char *buf, char len);
+COMM_ERR comm_send(char *buf, char len);
 
 /*
  * Receive data from the remote, store it to buffer buf, store length of
  * received data to len. Leave function after timeout miliseconds.
  * Return: error code.
  */
-ERR comm_recv(char *buf, char *len, int timeout);
+COMM_ERR comm_recv(char *buf, char *len, int timeout);
 
 
 
