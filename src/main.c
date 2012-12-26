@@ -22,16 +22,16 @@ int strlen(char *s)
 
 int main()
 {
-	char *s = ":SSBOOT";
+	char *s = ":SSBOOT ";
 	char r[16];
 	int status;
 	char len = 4;
 	board_init();
 	comm_init();
 
-	// GPIOC14 10MHz, output push-pull
-	//GPIOC->CRH &= ~(GPIO_CRH_MODE14 | GPIO_CRH_CNF14);
-	//GPIOC->CRH |= GPIO_CRH_MODE14_0;
+
+	flash_erase_sector(0x08000400);
+	flash_write_sector(0x08000400, (unsigned short *)s, 8);
 
 	comm_send(s, strlen(s));
 	status = comm_recv(r, &len, 2000);
