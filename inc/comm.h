@@ -28,14 +28,14 @@ COMM_ERR comm_init();
  * Send buffer buff of size len to the remote.
  * Return: error code.
  */
-COMM_ERR comm_send(char *buf, char len);
+COMM_ERR comm_send(char *buf, int len);
 
 /*
  * Receive data from the remote, store it to buffer buf, store length of
  * received data to len. Leave function after timeout miliseconds.
  * Return: error code.
  */
-COMM_ERR comm_recv(char *buf, char *len, int timeout);
+COMM_ERR comm_recv(char *buf, int *len, int timeout);
 
 
 

@@ -9,37 +9,31 @@
 
 #include "board.h"
 #include "comm.h"
+#include "flash.h"
 
-int strlen(char *s)
-{
-	int i = 0;
-	while(*s++ != 0)
-		i++;
-
-	return i+1;
-}
+#define BOOT_TIMEOUT_MS 2000
+#define BUFFER_LEN 1024
+char buf[BUFFER_LEN];
 
 
 int main()
 {
-	char *s = ":SSBOOT ";
-	char r[16];
-	int status;
-	char len = 4;
+	COMM_ERR comm_status;
+	int len = BUFFER_LEN;
+
 	board_init();
 	comm_init();
 
+	comm_send(":SSBOOT", 7);
+	comm_status = comm_recv(buf, &len, BOOT_TIMEOUT_MS);
 
-	flash_erase_sector(0x08000400);
-	flash_write_sector(0x08000400, (unsigned short *)s, 8);
+	if (comm_status == COMM_ERR_TIMEOUT || buf[0] != 'i')
+	{
+		comm_send("NOK", 3);
+		while(1);
+	}
 
-	comm_send(s, strlen(s));
-	status = comm_recv(r, &len, 2000);
-
-	if (status == ERR_TIMEOUT)
-		comm_send("  timeout", 10);
-	else
-		comm_send("  len", 6);
+	comm_send("OK", 2);
 
 
 	while(1);

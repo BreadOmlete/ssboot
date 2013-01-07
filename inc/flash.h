@@ -19,7 +19,7 @@ typedef enum {
 
 
 /* Return size of flash sector */
-FLASH_ERR flash_sector_size();
+int flash_sector_size();
 
 /* Erase flash memory sector
  * address - any address inside sector to erase

@@ -59,9 +59,9 @@ COMM_ERR comm_init()
 	return COMM_OK;
 }
 
-COMM_ERR comm_send(char *buf, char len)
+COMM_ERR comm_send(char *buf, int len)
 {
-	while(--len) {
+	while(len--) {
 		while(!(USART1->SR & USART_SR_TXE));
 		USART1->DR = *buf++;
 	}
@@ -69,7 +69,7 @@ COMM_ERR comm_send(char *buf, char len)
 	return COMM_OK;
 }
 
-COMM_ERR comm_recv(char *buf, char *len, int timeout)
+COMM_ERR comm_recv(char *buf, int *len, int timeout)
 {
 	int i = 0;
 	_delay_counter = timeout;
@@ -79,14 +79,23 @@ COMM_ERR comm_recv(char *buf, char *len, int timeout)
 		while(!(USART1->SR & USART_SR_RXNE) && _delay_counter);
 		if (USART1->SR & USART_SR_RXNE) {
 			buf[i++] = USART1->DR & 0xff;
-			_delay_counter = timeout;
+			_delay_counter = 100;
 		} else {
 			*len = i;
-			return COMM_ERR_TIMEOUT;
+			if (i == 0)
+				return COMM_ERR_TIMEOUT;
+			else
+				return COMM_OK;
 		}
 	}
 
 	return COMM_ERR_FULL;
+}
+
+/* From flash.h */
+int flash_sector_size()
+{
+	return 0x400;
 }
 
 FLASH_ERR flash_erase_sector(unsigned int address)
