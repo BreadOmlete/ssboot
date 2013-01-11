@@ -16,6 +16,8 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    std::cout << "Waiting for device (you may need to reset target)..." << std::endl;
+
     //    ifstream program(argv[2], ios::binary);
 
     SerialPort *serial;
@@ -31,7 +33,7 @@ int main(int argc, char **argv)
 
     std::string buf;
 
-    serial->receive(buf, 20000);
+    serial->receive(buf, 10000);
     if (buf.find(SSBOOT_WELCOME_MSG, 0) == std::string::npos) {
         std::cout << "Please enable SSBOOT mode!" << std::endl;
         delete serial;
