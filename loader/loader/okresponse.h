@@ -4,8 +4,6 @@
 #include <string>
 #include "iresponse.h"
 
-typedef IResponse<std::string> StringResponse;
-
 class OKResponse : public StringResponse
 {
 public:

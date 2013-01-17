@@ -20,4 +20,6 @@ protected:
 
 };
 
+typedef IResponse<std::string> StringResponse;
+
 #endif // IRESPONSE_H
