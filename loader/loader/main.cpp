@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     SerialPort *serial;
 
     try {
-        serial = new SerialPort(argv[1]);
+        SerialPort::initialize(argv[1]);
     }
 
     catch(boost::system::system_error err) {
@@ -31,19 +31,24 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    serial = SerialPort::serialPort();
+    serial->setTimeout(10000);
+
     std::string buf;
 
-    serial->receive(buf, 10000);
+    serial->receive(buf);
     if (buf.find(SSBOOT_WELCOME_MSG, 0) == std::string::npos) {
         std::cout << "Please enable SSBOOT mode!" << std::endl;
         delete serial;
         return 1;
     }
 
+    serial->setTimeout(500);
+
     // send bootloader enter string
     serial->send(SSBOOT_ENTER_MSG);
     buf.clear();
-    serial->receive(buf, 500);
+    serial->receive(buf);
     if (buf.find("NOK", 0) != std::string::npos)
     {
         std::cout << "Please enable SSBOOT mode!" << std::endl;

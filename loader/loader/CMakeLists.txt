@@ -1,5 +1,5 @@
 project(loader)
 cmake_minimum_required(VERSION 2.8)
-add_executable(${PROJECT_NAME} main.cpp serialport.cpp)
+add_executable(${PROJECT_NAME} main.cpp serialport.cpp icommand.cpp iresponse.cpp itransport.cpp okresponse.cpp)
 target_link_libraries(${PROJECT_NAME} boost_system)
 set(CMAKE_CXX_FLAGS "-O2 -pthread -g")
