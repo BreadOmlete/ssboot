@@ -7,8 +7,8 @@ template<class T>
 class IResponse
 {
 public:
-    IResponse();
-    virtual ~IResponse();
+    IResponse() {};
+    virtual ~IResponse() {};
 
     virtual T response() = 0;
 

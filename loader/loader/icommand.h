@@ -8,11 +8,27 @@ template<class T>
 class ICommand
 {
 public:
-    ICommand();
-    virtual ~ICommand();
+    ICommand() : mBuffer(0), mResponse(0) {};
+    virtual ~ICommand() {};
 
-    void send() throw(std::string);
-    IResponse<T> *response();
+    void send() throw(std::string)
+    {
+        ITransport *transport = ITransport::transport();
+        if (!transport)
+            throw std::string("Missing transport!");
+    
+        transport->send(mBuffer);
+
+        std::string buf;
+        transport->receive(buf);
+
+        processResponse(buf);
+    }
+    
+    IResponse<T> *response()
+    {
+        return mResponse;
+    }
 
 protected:
     virtual void processResponse(std::string &buf) = 0;
