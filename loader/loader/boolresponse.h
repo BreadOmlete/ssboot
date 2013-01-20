@@ -1,14 +1,14 @@
-#ifndef OKRESPONSE_H
-#define OKRESPONSE_H
+#ifndef BOOLRESPONSE_H
+#define BOOLRESPONSE_H
 
 #include <string>
 #include "iresponse.h"
 
-class OKResponse : public StringResponse
+class BoolResponse : public StringResponse
 {
 public:
-    OKResponse();
-    ~OKResponse();
+    BoolResponse();
+    ~BoolResponse();
 
     std::string response();
 
